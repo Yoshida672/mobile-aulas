@@ -1,76 +1,91 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View,ImageBackground, TextInput, SafeAreaView, FlatList } from 'react-native';
-import {Ionicons} from 'react-native-vector-icons'
+import { StyleSheet, ImageBackground, FlatList, Dimensions, TouchableOpacity, Keyboard } from 'react-native';
+import { Image } from 'expo-image';
 import API_KEY from '../API_KEY';
 import axios from 'axios';
+import Cabecalho from '../Componentes/Cabecalho';
 
-export default function TelaResultado({route,navigation}) {
+const { width, height } = Dimensions.get("window")
+const IMAGE_WIDTH = width
+const IMAGE_HEIGHT = height
+
+export default function TelaResultado({ route, navigation }) {
   const escolha = route.params.escolha
-  const link = `api.giphy.com/v1/${escolha}/search`
-const[textPesq,setTextPesq]=useState("");
-const[dados,setDados]=useState([]);
-  
-const requestData = async(textPesq)=>{
-  try{
-const resultado = await axios.get(link,{
-  params:{
-    api_key:API_KEY,
-    q:textPesq,
-    lang:"pt"
+  const link = `http://api.giphy.com/v1/${escolha}/search`
+
+  const [text, setText] = useState('')
+  const [data, setData] = useState([])
+
+  const solicitarDados = async (text) => {
+    Keyboard.dismiss();
+    try {
+
+      const resultado = await axios.get(link, {
+        params: {
+          api_key: API_KEY,
+          q: text
+        }
+      })
+      //console.log(resultado.data.data.images)
+
+      setData(resultado.data.data)
+    } catch (err) {
+      console.log(err)
+    }
   }
-})
-setDados(resultado.data.data)
-  }
-  catch(err){
-    console.log(err)
-  }
-}
-return (
+
+  return (
     <ImageBackground
-     source={require("../../assets/BG.png") }
-     style={styles.container}
-     >
-      <SafeAreaView style={{flexDirection:'row',justifyContent:'space-between'}}>
-        <Ionicons name="chevron-back" size={40} colors="white" onPress={()=>navigation.goBack()}/>
-        <TextInput 
-        placeholder='Digite sua pesquisa'
-        autoCapitalize='none'
-        autoCorrect={false}
-        value={textPesq}
-        onChangeText={(value)=>setTextPesq(value)}
-        />
-        <Ionicons name="search" size={40} color="white" onPress={()=>requestData(textPesq)}/>
-      </SafeAreaView>
-        
-        <FlatList
-        data={dados}
-        renderItem={({item})=>{
-          return(
-            <Image
-            style={styles.image}
-            source={{uri:item.image.preview_gif.url}}/>
+      source={require('../../assets/BG.png')}
+      style={styles.container}
+    >
+      <Cabecalho
+        text={text}
+        setText={(valor) => setText(valor)}
+        solicitarDados={solicitarDados}
+        navigation={navigation}
+      />
+
+      <FlatList
+        data={data}
+        numColumns={2}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity onPress={() => navigation.navigate("TelaDetalhes")}>
+
+              <Image
+                style={styles.image}
+                source={{ uri: item.images.preview_gif.url }}
+              />
+
+            </TouchableOpacity>
+
           )
-        }}/>
+        }}
+      />
+
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1
   },
-  input:{
-    flex:1,
-    ImageBackground:'white',
-    borderRadius:10,
-    paddingLeft:10
+  cabecalho: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 50
   },
-  image:{
-    width:250,
-    height:250
- }
+  textInput: {
+    backgroundColor: "white",
+    width: 300,
+    borderRadius: 10,
+    paddingLeft: 10
+  },
+  image: {
+    width: IMAGE_WIDTH / 2,
+    height: IMAGE_WIDTH / 2
+  }
 });
