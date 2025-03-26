@@ -1,14 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, ImageBackground, FlatList, Dimensions, TouchableOpacity, Keyboard } from 'react-native';
+import { ImageBackground, FlatList, Text, TouchableOpacity, Keyboard, View } from 'react-native';
 import { Image } from 'expo-image';
 import API_KEY from '../API_KEY';
 import axios from 'axios';
 import Cabecalho from '../Componentes/Cabecalho';
-
-const { width, height } = Dimensions.get("window")
-const IMAGE_WIDTH = width
-const IMAGE_HEIGHT = height
+import TextoInfo from '../Componentes/TextoInfo';
+import { styles } from '../Estilo/styles';
+import Loading from '../Componentes/Loading';
 
 export default function TelaResultado({ route, navigation }) {
   const escolha = route.params.escolha
@@ -16,11 +15,13 @@ export default function TelaResultado({ route, navigation }) {
 
   const [text, setText] = useState('')
   const [data, setData] = useState([])
-
+  const [mostrarMensagem,setMostrarMensagem] = useState(true)
+  const [isLoading,setIsLoading]=useState(false)
   const solicitarDados = async (text) => {
     Keyboard.dismiss();
+    setIsLoading(true)
     try {
-
+      
       const resultado = await axios.get(link, {
         params: {
           api_key: API_KEY,
@@ -28,10 +29,13 @@ export default function TelaResultado({ route, navigation }) {
         }
       })
       //console.log(resultado.data.data.images)
-
+      
       setData(resultado.data.data)
+      setMostrarMensagem(false)
+      setIsLoading(false)
     } catch (err) {
       console.log(err)
+   
     }
   }
 
@@ -50,9 +54,17 @@ export default function TelaResultado({ route, navigation }) {
       <FlatList
         data={data}
         numColumns={2}
+        ListHeaderComponent={
+          <>
+          <TextoInfo
+           mostrarMensagem={mostrarMensagem}
+           />
+          <Loading isLoading={isLoading}/> 
+           </>
+        }
         renderItem={({ item }) => {
           return (
-            <TouchableOpacity onPress={() => navigation.navigate("TelaDetalhes")}>
+            <TouchableOpacity onPress={() => navigation.navigate("TelaDetalhes",{item:item})}>
 
               <Image
                 style={styles.image}
@@ -69,23 +81,3 @@ export default function TelaResultado({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  cabecalho: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 50
-  },
-  textInput: {
-    backgroundColor: "white",
-    width: 300,
-    borderRadius: 10,
-    paddingLeft: 10
-  },
-  image: {
-    width: IMAGE_WIDTH / 2,
-    height: IMAGE_WIDTH / 2
-  }
-});

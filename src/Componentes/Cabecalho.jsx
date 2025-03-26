@@ -1,11 +1,13 @@
 import { StyleSheet, View, TextInput } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-
+import { styles } from "../Estilo/styles";
 export default function Cabecalho({
   navigation,
   text,
   setText,
   solicitarDados,
+  mostrarMensagem,
+  setMostrarMensagem
 }) {
   return (
     <View style={styles.cabecalho}>
@@ -18,10 +20,15 @@ export default function Cabecalho({
       <TextInput
         style={styles.textInput}
         placeholder="Digite sua pesquisa"
+        keyboardType="default"
         autoCapitalize="none"
         autoCorrect={false}
         value={text}
         onChangeText={(value) => setText(value)}
+        onSubmitEditing={()=>solicitarDados(text)}
+        
+
+
       />
       <Ionicons
         name="search"
@@ -32,19 +39,3 @@ export default function Cabecalho({
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  cabecalho: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 50,
-  },
-  textInput: {
-    backgroundColor: "white",
-    width: 300,
-    borderRadius: 10,
-    paddingLeft: 10,
-  },
-});

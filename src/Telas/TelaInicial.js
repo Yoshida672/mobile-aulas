@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
-
+import { styles } from '../Estilo/styles';
 export default function TelaInicial({navigation}) {
   
   return (
@@ -28,30 +28,3 @@ export default function TelaInicial({navigation}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textoPrincipal:{
-    color:'white',
-    fontSize:25,
-    fontWeight:'bold'
-  },
-  btn:{
-    width:100,
-    height:50,
-    borderRadius:10,
-    backgroundColor:'white',
-    margin:10,
-    justifyContent:'center',
-    alignItems:'center'
-  },
-  textBtn:{
-    color:'black',
-    fontSize:15,
-    fontWeight:'bold'
-  }
-});
