@@ -39,7 +39,6 @@ export default function Main() {
 
   return (
     <View style={styles.container}>
-    
 
       <Text style={styles.subtitle}>Lista de Usuários</Text>
       <FlatList
@@ -50,10 +49,10 @@ export default function Main() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.userId}>ID: {item.id}</Text>
-            <Text style={styles.userName}>{item.name}</Text>
-            <Text style={styles.userEmail}>{item.email}</Text>
+            <Text style={styles.userName}>Nome: {item.name}</Text>
+            <Text style={styles.userEmail}>Email: {item.email}</Text>
             <Text style={styles.userCity}>
-              {item.address?.city ?? "Cidade não informada"}
+              {item.address? `Cidade: ${item.address.city}`  : "Cidade não informada"}
             </Text>
             <Button
               title="Deletar"
