@@ -35,21 +35,13 @@ export default function LoginScreen() {
       return;
     }
     signInWithEmailAndPassword(auth,email,senha).then(async(userCredential)=>{
-      try{
+    
         const user = userCredential.user
         await AsyncStorage.setItem('@user',JSON.stringify(user))
         Alert.alert('Sucesso ao logar', `Usuário logado com sucesso!`);       
           router.push('/HomeScreen')
-   
-        }
-      catch(error){
-        console.log(error)
-        Alert.alert('Erro ao realizar login');       
-
-      }
     }) 
    
-    // Aqui você poderia fazer um fetch/axios para enviar ao backend
   };
 
   const esqueceuSenha = () =>{
@@ -92,12 +84,6 @@ export default function LoginScreen() {
         <Text style={styles.textoBotao}>Login</Text>
       </TouchableOpacity>
 
-      {/* Botão */}
-      <TouchableOpacity 
-      style={{marginTop:20,alignItems:'center',justifyContent:'center'}}
-       onPress={esqueceuSenha}>
-        <Text  style={{color:'white'}}>Esqueci a senha</Text>
-      </TouchableOpacity>
 
       <Link href="CadastrarScreen" style={{marginTop:20,color:'white',marginLeft:150}}>Cadastre-se</Link>
     </View>
