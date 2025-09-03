@@ -1,25 +1,33 @@
 import React, { useEffect } from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useTheme } from "../context/ThemeContext";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function ThemeToggleButton() {
-    const { toggleTheme, colors } = useTheme()
-   
+    const { toggleTheme, colors,theme } = useTheme()
+    
+ 
+    
     return (
         <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.button }]}
+            style={[styles.button, { backgroundColor: 'transparent' }]}
             onPress={toggleTheme}
-        >
-            <Text style={[styles.texto, { color: colors.buttonText }]}>Alterar Tema</Text>
+        >           
+        <MaterialIcons name={theme ==='dark'?'dark-mode':'light-mode'} size={24} color={theme==='dark'?'white':'black'} />
         </TouchableOpacity>
     )
+ 
+    
+    
 }
 const styles = StyleSheet.create({
     button: {
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 8,
-        marginTop: 20
+        width:50,
+        height:50,
+        alignItems:'center',
+        justifyContent:"center",
+        borderRadius: 30
+
     },
     texto: { fontSize: 16, fontWeight: 'bold' }
 })

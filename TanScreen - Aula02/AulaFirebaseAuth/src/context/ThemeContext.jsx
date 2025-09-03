@@ -40,7 +40,7 @@ export function ThemeProvider({children}){
     }
   
     return(
-        <ThemeContext.Provider value={{toggleTheme,colors:themeColors[theme]}}>
+        <ThemeContext.Provider value={{toggleTheme,colors:themeColors[theme],theme:theme}}>
             {children}
         </ThemeContext.Provider>
     )

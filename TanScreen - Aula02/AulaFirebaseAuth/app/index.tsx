@@ -4,14 +4,21 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword, sendPasswordResetEmail} from 'firebase/auth';
-import {auth} from '../services/firebaseConfig'
+import {auth} from '../src/services/firebaseConfig'
 import { useTheme } from '../src/context/ThemeContext'
+import ThemeToggleButton from '../src/components/ThemeToggleButton';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
   const{colors} = useTheme()
   // Estados para armazenar os valores digitados
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const {t,i18n} = useTranslation();
+
+  const mudarIdioma=(lang:string)=>{
+    i18n.changeLanguage(lang)
+  }
 
   const router = useRouter()//Hook para navegação
 
@@ -63,14 +70,15 @@ export default function LoginScreen() {
       return
     }
     sendPasswordResetEmail(auth,email)
-      .then(()=> alert("Enviado e-mail de recuperação senha"))
-      .catch((error)=>alert("Error ao enviar e-mail de redefinição de senha"))
-
+    .then(()=> alert("Enviado e-mail de recuperação senha"))
+    .catch((error)=>alert("Error ao enviar e-mail de redefinição de senha"))
+    
   }
-
+  
   return (
     <View style={[styles.container,{backgroundColor:colors.background}]}>
-      <Text style={[styles.titulo,{color:colors.text}]}>Realizar login</Text>
+      <ThemeToggleButton/>
+      <Text style={[styles.titulo,{color:colors.text}]}>{t("login")}</Text>
 
       {/* Campo Email */}
       <TextInput
@@ -81,7 +89,7 @@ export default function LoginScreen() {
         autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
-      />
+        />
 
       {/* Campo Senha */}
       <TextInput
@@ -91,12 +99,26 @@ export default function LoginScreen() {
         secureTextEntry
         value={senha}
         onChangeText={setSenha}
-      />
-
+        />
+  <View>
+    <TouchableOpacity
+    onPress={()=>mudarIdioma('en')}>
+<Text>En</Text>
+    </TouchableOpacity>
+  
+    <TouchableOpacity
+    onPress={()=>mudarIdioma('pt')}>
+<Text>Pt</Text>
+    </TouchableOpacity>
+  </View>
+  
+  
       {/* Botão */}
       <TouchableOpacity style={styles.botao} onPress={handleLogin}>
         <Text style={styles.textoBotao}>Login</Text>
       </TouchableOpacity>
+
+
 
       <Link href="CadastrarScreen" style={{marginTop:20,color:colors.text,marginLeft:150}}>Cadastre-se</Link>
       <Text style={{marginTop:20,color:colors.text,marginLeft:130}} onPress={esqueceuSenha}>Esqueceu a senha</Text>
