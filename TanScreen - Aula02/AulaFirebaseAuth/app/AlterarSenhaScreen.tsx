@@ -1,63 +1,64 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { createUserWithEmailAndPassword, reauthenticateWithCredential,updatePassword } from 'firebase/auth';
+import { EmailAuthProvider, reauthenticateWithCredential,updatePassword } from 'firebase/auth';
 import {auth} from '../services/firebaseConfig'
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { EmailAuthProvider } from 'firebase/auth/web-extension';
 
-export default function AlterarSenhaScreen() {
+export default function CadastroScreen() {
   // Estados para armazenar os valores digitados
   const [senhaAtual, setSenhaAtual] = useState('');
-  const [novaSenha,setNovaSenha] = useState('');
-  const [confirmaSenha,setConfirmaSenha] = useState('');
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
 
   const router = useRouter()//Hook para navegação
 
   // Função para simular o envio do formulário
-  const handlerAlterarSenha  =async () => {
-    if (!novaSenha || !confirmaSenha || !senhaAtual) {
+  const handleAlterarSenha = async() => {
+    if (!senhaAtual || !novaSenha || !confirmarSenha) {
       Alert.alert('Atenção', 'Preencha todos os campos!');
       return;
     }
-    if(novaSenha!=senhaAtual){
-    Alert.alert('Atenção', 'As Senhas não coincidem!');
-    return; 
+    if(novaSenha!==confirmarSenha){
+        Alert.alert("Erro","As senhas não coincidem!")
+        return
     }
     if(novaSenha.length<6){
-        Alert.alert("Erro","Nova senha precisa ter mais de 6 caracteres")
+        Alert.alert("Erro","A nova senha de no mínimo 6 caracteres.")
+        return
     }
     try{
         const user = auth.currentUser
-        if(!user||!user.email){
-            Alert.alert("Erro","Nenhum usuário logado")
+        if(!user || !user.email){
+            Alert.alert("Erro","Nenhum usuário logado.")
             return
         }
 
-        //Cria as credenciais para reautenthicar o usuario
-        const credential = EmailAuthProvider.credential(user.email,senhaAtual)
-        await reauthenticateWithCredential(user,credential)
-        await updatePassword(user,novaSenha)
-        Alert.alert("Sucesso","Senha alterada com sucesso")
-        router.push("HomeScreen")
-    }
-    catch(error){
-        console.log("Erro ao atualizar senha")
-        Alert.alert("Erro","Senha não alterada")
-    }
+        //Cria as credenciais para reautenticar o usuário
+        const credencial = EmailAuthProvider.credential(user.email,senhaAtual)
+        await reauthenticateWithCredential(user,credencial)
 
+        //Atualizar a senha
+        await updatePassword(user,novaSenha)
+        Alert.alert("Suceso","Senha alterada com sucesso.")
+        router.push("/HomeScreen")
+
+    }catch(error){
+        console.log("Erro ao atualizar senha")    
+        Alert.alert("Senha não alterada")
+    }
+    
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Alterar Senha</Text>
 
-      {/* Campo Senha atual */}
+      {/* Campo Senha Atual */}
       <TextInput
         style={styles.input}
-        placeholder="Digite a Senha Atual"
+        placeholder="Digite a senha atual"
         placeholderTextColor="#aaa"
-        secureTextEntry
         value={senhaAtual}
         onChangeText={setSenhaAtual}
       />
@@ -67,7 +68,6 @@ export default function AlterarSenhaScreen() {
         style={styles.input}
         placeholder="Digite a nova senha"
         placeholderTextColor="#aaa"
-        secureTextEntry
         value={novaSenha}
         onChangeText={setNovaSenha}
       />
@@ -75,16 +75,16 @@ export default function AlterarSenhaScreen() {
       {/* Campo Confirmar Senha */}
       <TextInput
         style={styles.input}
-        placeholder="Confirmar Senha"
+        placeholder="Digite novamente a nova senha"
         placeholderTextColor="#aaa"
-        secureTextEntry
-        value={confirmaSenha}
-        onChangeText={setConfirmaSenha}
+        //secureTextEntry
+        value={confirmarSenha}
+        onChangeText={setConfirmarSenha}
       />
 
       {/* Botão */}
-      <TouchableOpacity style={styles.botao} onPress={handlerAlterarSenha}>
-        <Text style={styles.textoBotao}>Alterar</Text>
+      <TouchableOpacity style={styles.botao} onPress={handleAlterarSenha}>
+        <Text style={styles.textoBotao}>Alterar Senha</Text>
       </TouchableOpacity>
     </View>
   );

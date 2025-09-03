@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { deleteUser } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
-import ItemLoja from "./ItemLoja";
+import ItemLoja from "../components/ItemLoja"
 export default function HomeScreen(){
     const router = useRouter();
 
